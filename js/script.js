@@ -1,12 +1,40 @@
 // JavaScript Document
 onload=init;
+var drop_array = new Array();
+//vars to name the timers that make drops spawn and move every so often
+var spawntimer;
+var movetimer;
 
-function init() {
-	//make an object based on the Drop Class:
-	var drop1 = new Drop();
-	drop1.create();
+function init(){
+	//set an interval to do the spawn function every 2 seconds
+	spawntimer = setInterval(spawn,2000);
+	//set an interval to move the drops 20 times a sec
+	movetimer = setInterval(moveAllDrops,1000/20);
 }
+function spawn() {
+	//make an object based on the Drop Class:
+	var anotherdrop = new Drop();
+	anotherdrop.create();
+	//add it to the array
+	drop_array.push(anotherdrop);
+}
+function moveAllDrops(){
+	//for each drop in the array
+	for (var i=0; i < drop_array.length; i++){
+		var currentdrop = drop_array[i];
+		
+		currentdrop.y +=5;
+		//add to up-down position of drop (higher=lower on page)
+		currentdrop.item_on_page.style.top = currentdrop.y + "px"
+		
+		//if the drop is low enough, destroy it
+		if(currentdrop.y>250){
+			currentdrop.destroy();
+		}
+	}//close FOR LOOP
+}//end moveAllDrops
 //let's make a Class (blueprint) for each Drop we generate
+
 function Drop(){
 	this.x; //starts empty, will keep track of each Drop's left-right position
 	this.y; //starts empty, will keep track of each Drop's up-down position
@@ -19,7 +47,7 @@ function Drop(){
 		this.item_on_page = document.createElement("section");
 		//store a random x and y position, different for each Drop. I'm using screen width or 500, height of 300:
 		this.x = Math.floor(Math.random()*500);
-		this.y = Math.floor(Math.random()*300);
+		this.y = -25;//Math.floor(Math.random()*300);
 		//use those x and y coordinates in the CSS to position the Drops:
 		this.item_on_page.style.left = this.x + "px";
 		this.item_on_page.style.top = this.y + "px";
@@ -30,6 +58,21 @@ function Drop(){
 	*
 	*/
 	this.destroy = function(){
+		//create an animated splash GIF
+		var newsplash = document.createElement("img");
+		newsplash.src = "img/splash.gif?" +Math.random();
+		//set its style: absolute, x & y
+		newsplash.style.position = "absolute";
+		newsplash.style.left = this.x + "px";
+		newsplash.style.top = this.y + "px";
+		//attach splash onto the page:
+	document.getElementsByTagName("body")[0].appendChild(newsplash);
+	document.getElementsByTagName("body")[0].removeChild(this.item_on_page);
+		//figure out that coin's position in the array:
+		var this_drops_index_num = drop_array.indexOf(this);
+		//splice it out of the array
+		drop_array.splice(this_drops_index_num,1);
+		console.log(coin_array.length);
 		
 	}
 } //close the Class
