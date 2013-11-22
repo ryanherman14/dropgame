@@ -55,11 +55,41 @@ function moveAllDrops(){
 		currentdrop.item_on_page.style.top = currentdrop.y + "px"
 		
 		//if the drop is low enough, destroy it
-		if(currentdrop.y>250){
+		if(currentdrop.y>350){
 			currentdrop.destroy();
 		}
+
+		//if the drop touches the bucket, destroy it
+		if(collisionCheck(user_bucket, currentdrop)){
+		currentdrop.destroy();
+		}
+	
 	}//close FOR LOOP
 }//end moveAllDrops
+function collisionCheck(big_obj, sm_obj){
+	var big_left_edge = big_obj.x;
+	var sm_left_edge = sm_obj.x;
+	var big_right_edge = big_obj.x + big_obj.width;
+	var sm_right_edge =	sm_obj.x + sm_obj.width;
+	var big_top_edge = big_obj.y;
+	var sm_top_edge = sm_obj.y;
+	var big_bottom_edge = big_obj.y + big_obj.height;
+	var sm_bottom_edge = sm_obj.y + sm_obj.height;
+	//if items are touching
+	if(sm_left_edge > big_left_edge){
+		if(sm_right_edge < big_right_edge){
+			if(sm_top_edge > big_top_edge){
+				if(sm_bottom_edge < big_bottom_edge){
+		//send "true" back to where function was called
+		return true;
+				}
+			}
+		}
+	}
+	//otherwise they're not touching, so no collision (send "false" back to where function was called)
+	return false;
+}
+
 //let's make a Class (blueprint) for each Drop we generate
 
 function Drop(){
@@ -101,7 +131,7 @@ function Drop(){
 		var this_drops_index_num = drop_array.indexOf(this);
 		//splice it out of the array
 		drop_array.splice(this_drops_index_num,1);
-		console.log(coin_array.length);
+		console.log(drop_array.length);
 		
 	}
 } //close the Class
